@@ -55,7 +55,6 @@ function SaveToStore(items) {
     SaveToStore(items)
 }
 
-
    function ToggleCompletedState(ev, id) {
     let todos = LoadFromStore()
     let filteredTodos = todos.filter(todo => todo.id == id)
@@ -63,6 +62,16 @@ function SaveToStore(items) {
     SaveToStore(todos)
 }
 
+function editItem(ev) {
+    let items = LoadFromStore()
+    let id = ev.target.getAttribute("newLi");
+    let newText = ev.target.value;
+    document.getElementById(id).innerText = newText;
+    document.querySelectorAll(".text-input").forEach(element => {
+        element.addEventListener("onchange", editItem);
+        SaveToStore(newText)
+      });
+  }
 
 function DisplayTodos(items, parent) {
     parent.innerHTML = null //clears screen before rendering 
@@ -95,20 +104,24 @@ function DisplayTodos(items, parent) {
         div.appendChild(tdtext);
         subdiv.appendChild(removeBtn);
         div.appendChild(subdiv);
-
+        
         div.setAttribute("todo-id", element.id)
         div.addEventListener("drop", (ev) => drop(ev))
 
-        newTodoEl.contentEditable = "true";
+        newTodoEl.contentEditable = true;
         newTodoEl.draggable = true
+        newTodoEl.setAttribute("id", "newLi");
         newTodoEl.appendChild(div)
         newTodoEl.addEventListener("dragover", (ev) => allowDrop(ev))
         newTodoEl.addEventListener("dragstart", (ev) => drag(ev, element.id))
 
         parent.appendChild(newTodoEl)
 
+
     });
 }
+
+  
 
  function ClearDoneTodos() {
     let items = LoadFromStore()
@@ -121,6 +134,7 @@ function DeleteAllTodos() {
     localStorage.setItem("todos", JSON.stringify([]))
     window.location.reload()
 }
+
 
 function Setup() {
     saveBtn.onclick = AddOrCreate
